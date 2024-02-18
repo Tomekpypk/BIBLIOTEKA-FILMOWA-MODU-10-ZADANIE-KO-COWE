@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="text-center mt-5">
+    <h1>{{ current_list.capitalize() }} MOVIES</h1>
+    <p class="lead">LMAO UDAŁO SIĘ</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        {% for list_info in available_lists %}
+            <a href="{{ url_for('homepage', list_type=list_info['id']) }}" class="btn btn-outline-info {% if list_info['id'] == current_list %}active{% endif %}">{{ list_info['name'] }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <a href="{{ url_for('homepage', list_type='now_playing') }}" class="btn btn-outline-info {% if 'now_playing' == current_list %}active{% endif %}">Now Playing</a>
+        <a href="{{ url_for('homepage', list_type='popular') }}" class="btn btn-outline-info {% if 'popular' == current_list %}active{% endif %}">Popular</a>
+        <a href="{{ url_for('homepage', list_type='top_rated') }}" class="btn btn-outline-info {% if 'top_rated' == current_list %}active{% endif %}">Top Rated</a>
+        <a href="{{ url_for('homepage', list_type='upcoming') }}" class="btn btn-outline-info {% if 'upcoming' == current_list %}active{% endif %}">Upcoming</a>
+    </div>
+</div>
+
+<div class="row">
+    {% for movie in movies %}
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card h-100">
+            <img src="{{ tmdb_image_url(movie.image, "w780") }}">
+            <div class="card-body">
+                <h4 class="card-title">{{ movie.title }}</h4>
+                <p class="card-text">{{ movie.description }}</p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('movie_details', movie_id=movie['id'], list_type=current_list) }}" class="btn btn-primary">Pokaż więcej</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
