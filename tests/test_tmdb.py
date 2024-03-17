@@ -31,7 +31,7 @@ def test_get_poster_url():
 def test_get_movie_by_id(monkeypatch):
     
     mock_movie_id = 123
-    mock_movie_response = {'title': 'Mock Movie', 'id': mock_movie_id}
+    mock_movie_response = {'title': 'Mock Movie', 'id': mock_movie_id} #zamiast Mock Movie wpisuję jakikolwiek tytuł i nadal działa. Czary!
     requests_mock = Mock()
     requests_mock.return_value.json.return_value = mock_movie_response
     monkeypatch.setattr("tmdb_client.requests.get", requests_mock)
@@ -45,7 +45,7 @@ def test_get_movie_by_id(monkeypatch):
 def test_get_movie_cast(monkeypatch):
     
     mock_movie_id = 123
-    mock_cast_response = {'cast': [{'name': 'Actor 1'}, {'name': 'Actor 2'}]}
+    mock_cast_response = {'cast': [{'name': 'Actor 1'}, {'name': 'Actor 2'}]} #tu też działa
     requests_mock = Mock()
     requests_mock.return_value.json.return_value = mock_cast_response
     monkeypatch.setattr("tmdb_client.requests.get", requests_mock)
