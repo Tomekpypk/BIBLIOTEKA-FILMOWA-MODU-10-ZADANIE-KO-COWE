@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import Mock, patch
+from main import app
 import tmdb_client
+
 
 def test_get_movies_list(monkeypatch):
     
@@ -54,6 +56,29 @@ def test_get_movie_cast(monkeypatch):
     
     assert cast == mock_cast_response['cast']
 
+
+
+@pytest.mark.parametrize("list_type", ["popular", "top_rated", "now_playing", "upcoming"])
+def test_homepage(monkeypatch, list_type):
+    api_mock = Mock(return_value={'results': []})
+    monkeypatch.setattr("tmdb_client.get_movies_list", api_mock)
+
+    with app.test_client() as client:
+        response = client.get('/')
+        assert response.status_code == 200
+        api_mock.assert_called_once_with(list_type)
+
+def test_homepage(monkeypatch):
+    list_types = ["popular", "top_rated", "now_playing", "upcoming"]
+    
+    for list_type in list_types:
+        api_mock = Mock(return_value={'results': []})
+        monkeypatch.setattr("tmdb_client.get_movies_list", api_mock)
+
+        with app.test_client() as client:
+            response = client.get('/', query_string={'list_type': list_type})
+            assert response.status_code == 200
+            api_mock.assert_called_once_with(list_type)
 
 
 if __name__ == "__main__":
