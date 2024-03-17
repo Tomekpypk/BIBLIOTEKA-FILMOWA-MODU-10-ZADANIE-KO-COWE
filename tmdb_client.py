@@ -13,7 +13,10 @@ def get_movies_list(list_type='popular'):
 
 def get_poster_url(poster_api_path, size="w780"):
     base_url = "https://image.tmdb.org/t/p/"
+    if poster_api_path.startswith("/"):
+        poster_api_path = poster_api_path[1:]
     return f"{base_url}{size}/{poster_api_path}"
+
 
 def get_movie_by_id(movie_id):
     endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}"
@@ -54,6 +57,22 @@ def get_movies(how_many=8, list_type='popular'):
         movies.append(movie_data)
     return movies
 
+def get_movie_by_id(movie_id):
+    endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}"
+    headers = {
+        "Authorization": f"Bearer {API_TOKEN}"
+    }
+    response = requests.get(endpoint, headers=headers)
+    response.raise_for_status()
+    movie = response.json()
+    if "cast" not in movie:
+        movie["cast"] = []
+    else:
+        cast = get_movie_cast(movie_id)
+        movie["cast"] = cast
+    return movie
+
+
 def get_available_lists():
     endpoint = "https://api.themoviedb.org/3/discover/movie"
     headers = {
@@ -77,3 +96,26 @@ def get_available_lists():
     unique_lists = {list_info['original_title']: list_info for list_info in lists}.values()
 
     return list(unique_lists)
+
+
+def search(search_query):
+   base_url = "https://api.themoviedb.org/3/"
+   api_token = API_TOKEN
+   headers = {
+       "Authorization": f"Bearer {api_token}"
+   }
+   endpoint = f"{base_url}search/movie?query={search_query}"
+
+   response = requests.get(endpoint, headers=headers)
+   response = response.json()
+   return response['results']
+
+def get_airing_today():
+    endpoint = f"https://api.themoviedb.org/3/tv/airing_today"
+    headers = {
+        "Authorization": f"Bearer {API_TOKEN}"
+    }
+    response = requests.get(endpoint, headers=headers)
+    response.raise_for_status()
+    response = response.json()
+    return response['results']
